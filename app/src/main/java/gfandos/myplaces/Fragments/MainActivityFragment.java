@@ -2,11 +2,17 @@ package gfandos.myplaces.Fragments;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,12 +21,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
+import java.io.File;
+import java.io.IOException;
+
 import gfandos.myplaces.R;
+import gfandos.myplaces.Utils.CameraManager;
+import gfandos.myplaces.Utils.GPSTracker;
 
 import static android.content.ContentValues.TAG;
 
@@ -30,12 +42,9 @@ import static android.content.ContentValues.TAG;
 public class MainActivityFragment extends Fragment {
 
     private MapView map;
-    public Location currentLocation;
-    // Flag for GPS status
-    boolean isGPSEnabled = false;
-
-    // Flag for network status
-    boolean isNetworkEnabled = false;
+    private GPSTracker tracker;
+    private CameraManager cameraManager;
+    private FloatingActionButton floatingCameraButton;
 
     public MainActivityFragment() {
     }
@@ -47,83 +56,28 @@ public class MainActivityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         map = (MapView) view.findViewById(R.id.map);
+        floatingCameraButton = (FloatingActionButton)  view.findViewById(R.id.onUseCamera);
 
+        tracker = new GPSTracker(getContext());
+        cameraManager = new CameraManager(this.getActivity());
+
+        floatingCameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraManager.takePhoto();
+            }
+        });
         initializeMap();
-        getLocation();
 
         setZoom();
-
-//      putMarkers();
 
         return view;
     }
 
-    private void getLocation() {
-        Context c = getContext();
-        LocationManager locationManager = (LocationManager) c.getSystemService(Context.LOCATION_SERVICE);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        //Check GPS is enabled
-        // Getting GPS status
-        isGPSEnabled = locationManager
-                .isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-        if (!isGPSEnabled) {
-
-        } else {
-            LocationListener locationListener = new MyLocationListener();
-            if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-
-            currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }
-
-    }
-
-    /*---------- Listener class to get coordinates ------------- */
-    private class MyLocationListener implements LocationListener {
-
-        @Override
-        public void onLocationChanged(Location loc) {
-
-            currentLocation = loc;
-
-//        /*------- To get city name from coordinates -------- */
-//            String cityName = null;
-//            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
-//            List<Address> addresses;
-//            try {
-//                addresses = gcd.getFromLocation(loc.getLatitude(),
-//                        loc.getLongitude(), 1);
-//                if (addresses.size() > 0) {
-//                    System.out.println(addresses.get(0).getLocality());
-//                    cityName = addresses.get(0).getLocality();
-//                }
-//            }
-//            catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            String s = longitude + "\n" + latitude + "\n\nMy Current City is: "
-//                    + cityName;
-//            editLocation.setText(s);
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {}
-
-        @Override
-        public void onProviderEnabled(String provider) {}
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {}
     }
 
     private void initializeMap() {
@@ -141,16 +95,16 @@ public class MainActivityFragment extends Fragment {
         GeoPoint startPoint;
         IMapController mapController;
 
-        if(isGPSEnabled) {
-            startPoint = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
-            mapController = map.getController();
+        mapController = map.getController();
+
+        if(tracker.canGetLocation()) {
+            startPoint = new GeoPoint(tracker.latitude, tracker.longitude);
             mapController.setZoom(15);
         } else {
+            tracker.showSettingsAlert();
             startPoint = new GeoPoint(41.390205, 2.154007);
-            mapController = map.getController();
-            mapController.setZoom(6);
+            mapController.setZoom(10);
         }
-
 
         mapController.setCenter(startPoint);
 

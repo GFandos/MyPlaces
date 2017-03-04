@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import gfandos.myplaces.R;
+import gfandos.myplaces.Utils.GPSTracker;
 
 public class MainActivity extends AppCompatActivity {
 
