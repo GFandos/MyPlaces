@@ -33,10 +33,10 @@ public class GPSTracker extends Service implements LocationListener {
     public double longitude;
 
     // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // 10 meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000; // 1 second
+    private static final long MIN_TIME_BW_UPDATES = 5000; // 5 second
 
     protected LocationManager locationManager;
 
@@ -157,6 +157,9 @@ public class GPSTracker extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+
+        getLocation();
+
     }
 
     @Override
