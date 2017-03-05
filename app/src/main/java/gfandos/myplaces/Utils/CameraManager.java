@@ -48,8 +48,7 @@ public class CameraManager {
         }
         // Continue only if the File was successfully created
         if (photoFile != null) {
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
-            activity.startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+
         }
 //        }
     }

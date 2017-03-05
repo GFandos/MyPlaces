@@ -24,6 +24,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
@@ -35,10 +39,12 @@ import org.osmdroid.views.overlay.Marker;
 import java.io.File;
 import java.io.IOException;
 
+import gfandos.myplaces.Pojo.Picture;
 import gfandos.myplaces.R;
 import gfandos.myplaces.Utils.CameraManager;
 import gfandos.myplaces.Utils.GPSTracker;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
 /**
@@ -51,6 +57,7 @@ public class MainActivityFragment extends Fragment {
     private CameraManager cameraManager;
     private FloatingActionButton floatingCameraButton;
     private RadiusMarkerClusterer markers;
+    static final int REQUEST_TAKE_PHOTO = 1;
 
     public MainActivityFragment() {
     }
@@ -65,7 +72,7 @@ public class MainActivityFragment extends Fragment {
         floatingCameraButton = (FloatingActionButton)  view.findViewById(R.id.onUseCamera);
 
         tracker = new GPSTracker(getContext());
-        cameraManager = new CameraManager(this.getActivity());
+        cameraManager = new CameraManager(this.getActivity().getParent());
 
         floatingCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override

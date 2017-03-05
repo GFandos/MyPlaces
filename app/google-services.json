@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "605992285165",
+    "firebase_url": "https://my-places-d19dd.firebaseio.com",
+    "project_id": "my-places-d19dd",
+    "storage_bucket": "my-places-d19dd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:605992285165:android:f611d4364a57ac6b",
+        "android_client_info": {
+          "package_name": "gfandos.myplaces"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "605992285165-sfl97ea4s1jdvjtdss32rje7v8hkogh3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "gfandos.myplaces",
+            "certificate_hash": "6c139f09fdd6fa651aeb9e24aba1eb2bc07bc967"
+          }
+        },
+        {
+          "client_id": "605992285165-opfevhlfh0aujrnjhklcatjureulpmim.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxFDtKxhif5LV6inLVJoSDDXE_6VpvVIk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "605992285165-opfevhlfh0aujrnjhklcatjureulpmim.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
