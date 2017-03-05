@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import gfandos.myplaces.Activities.MainActivity;
+
 import static android.app.Activity.RESULT_OK;
 
 
@@ -48,7 +50,7 @@ public class CameraManager {
         }
         // Continue only if the File was successfully created
         if (photoFile != null) {
-
+            ((MainActivity) activity).startPhotoActivity(photoFile, takePictureIntent);
         }
 //        }
     }

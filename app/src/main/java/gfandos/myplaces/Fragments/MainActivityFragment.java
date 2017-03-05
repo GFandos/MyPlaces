@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.osmdroid.api.IMapController;
@@ -39,6 +40,7 @@ import org.osmdroid.views.overlay.Marker;
 import java.io.File;
 import java.io.IOException;
 
+import gfandos.myplaces.Activities.MainActivity;
 import gfandos.myplaces.Pojo.Picture;
 import gfandos.myplaces.R;
 import gfandos.myplaces.Utils.CameraManager;
@@ -53,7 +55,7 @@ import static android.content.ContentValues.TAG;
 public class MainActivityFragment extends Fragment {
 
     private MapView map;
-    private GPSTracker tracker;
+    public GPSTracker tracker;
     private CameraManager cameraManager;
     private FloatingActionButton floatingCameraButton;
     private RadiusMarkerClusterer markers;
@@ -72,15 +74,15 @@ public class MainActivityFragment extends Fragment {
         floatingCameraButton = (FloatingActionButton)  view.findViewById(R.id.onUseCamera);
 
         tracker = new GPSTracker(getContext());
-        cameraManager = new CameraManager(this.getActivity().getParent());
+        cameraManager = new CameraManager(((MainActivity)getActivity()));
 
         floatingCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cameraManager.takePhoto();
-                putMarkers();
             }
         });
+
         initializeMap();
 
         setZoom();
@@ -88,10 +90,11 @@ public class MainActivityFragment extends Fragment {
         return view;
     }
 
-    private void putMarkers() {
+
+    public void putMarkers(Picture p) {
 
         setupMarkerOverlay();
-        addMarker();
+        addMarker(p);
 
     }
 
@@ -107,7 +110,7 @@ public class MainActivityFragment extends Fragment {
 
     }
 
-    private void addMarker() {
+    private void addMarker(Picture p) {
 
         Marker marker = new Marker(map);
         GeoPoint pos = new GeoPoint(

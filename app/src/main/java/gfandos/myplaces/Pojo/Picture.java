@@ -20,6 +20,10 @@ public class Picture {
         longitude = lon;
     }
 
+    public Picture() {
+
+    }
+
     public String getName() {
         return name;
     }
