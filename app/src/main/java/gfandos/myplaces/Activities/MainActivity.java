@@ -28,11 +28,15 @@ import gfandos.myplaces.Pojo.Picture;
 import gfandos.myplaces.R;
 import gfandos.myplaces.Utils.GPSTracker;
 
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
 public class MainActivity extends AppCompatActivity {
 
-    static final int REQUEST_TAKE_PHOTO = 1;
-    private static final int REQUEST_SAVE = 1;
+    static final int REQUEST_TAKE_PHOTO = 100;
+    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
+    private static final int REQUEST_SAVE = 300;
     private File filePhoto;
+    private Uri fileVideo;
     public DatabaseReference mDatabaseRef;
     private GPSTracker gps;
 
@@ -111,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startPhotoActivity(File photofile) {
-        System.out.println(photofile.exists());
+//        System.out.println(photofile.exists());
         filePhoto = photofile;
         Intent take = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (take.resolveActivity(getPackageManager()) != null) {
@@ -123,31 +127,53 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void startVideoActivity() {
+
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+        fileVideo = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);;
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileVideo);
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+        startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
-
+                System.out.println("request photo");
                 Intent i = new Intent(this, Information.class);
                 startActivityForResult(i, REQUEST_SAVE);
 
-                FragmentManager fm = getSupportFragmentManager();
 
+            }
+        }
+
+        if(requestCode == REQUEST_SAVE) {
+            if (resultCode == RESULT_OK) {
+
+                System.out.println("request save");
+                FragmentManager fm = getSupportFragmentManager();
                 MainActivityFragment fragment = (MainActivityFragment)fm.findFragmentById(R.id.fragment);
                 gps = fragment.tracker;
 
                 Date d = new Date();
-
                 String id = "" + d.getTime();
 
-//                Picture picture = new Picture(filePhoto.getAbsolutePath(), id, gps.latitude, gps.longitude);
+                Picture picture = new Picture(filePhoto.getAbsolutePath(), id, gps.latitude, gps.longitude);
 
+                if(data != null) {
+                    String array[] = data.getAction().split(" ");
 
-//                mDatabaseRef.push().setValue(picture);
+                    picture.setType(array[0]);
+                    picture.setName(array[1]);
+                    picture.setDescription(array[2]);
+                }
 
-
+                mDatabaseRef.push().setValue(picture);
             }
         }
     }

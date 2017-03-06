@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import gfandos.myplaces.Activities.Information;
 import gfandos.myplaces.R;
@@ -20,9 +22,11 @@ import gfandos.myplaces.R;
  */
 public class InformationFragment extends Fragment {
 
-    private CheckBox checkRes;
-    private CheckBox checkMon;
-    private CheckBox checkOth;
+    private RadioGroup radioGroup;
+
+    private RadioButton radioRes;
+    private RadioButton RadioMon;
+    private RadioButton RadioOth;
 
     private EditText titleEdit;
     private EditText descriptionEdit;
@@ -48,35 +52,31 @@ public class InformationFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        checkRes = (CheckBox) view.findViewById(R.id.checkRes);
-        checkMon = (CheckBox) view.findViewById(R.id.checkMon);
-        checkOth = (CheckBox) view.findViewById(R.id.checkOth);
+        radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
+
+        radioRes = (RadioButton) view.findViewById(R.id.radioRes);
+        RadioMon = (RadioButton) view.findViewById(R.id.RadioMon);
+        RadioOth = (RadioButton) view.findViewById(R.id.RadioOth);
 
         titleEdit = (EditText) view.findViewById(R.id.titleEdit);
         descriptionEdit = (EditText) view.findViewById(R.id.descriptionEdit);
-
-        if(checkRes.isChecked()) {
-            checkMon.setChecked(false);
-            checkOth.setChecked(false);
-            type = checkRes.getText().toString();
-        } else if (checkMon.isChecked()) {
-            checkRes.setChecked(false);
-            checkOth.setChecked(false);
-            type = checkMon.getText().toString();
-        } else if (checkOth.isChecked()) {
-            checkRes.setChecked(false);
-            checkMon.setChecked(false);
-            type = checkOth.getText().toString();
-        }
-
-        title = titleEdit.getText().toString();
-        description = descriptionEdit.getText().toString();
 
         onSave = (Button) view.findViewById(R.id.onSave);
 
         onSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(radioRes.isChecked()) {
+                    type = radioRes.getText().toString();
+                } else if (RadioMon.isChecked()) {
+                    type = RadioMon.getText().toString();
+                } else if (RadioOth.isChecked()) {
+                    type = RadioOth.getText().toString();
+                }
+
+                title = titleEdit.getText().toString();
+                description = descriptionEdit.getText().toString();
 
                 String data = type + " " + title + " " + description;
 

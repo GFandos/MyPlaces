@@ -22,6 +22,9 @@ public class Picture {
         pictureID = _pID;
         latitude = lat;
         longitude = lon;
+        name = "NO NAME";
+        type = "NO TYPE";
+        description = "NO DESCRIPTION";
     }
 
     public Picture() {

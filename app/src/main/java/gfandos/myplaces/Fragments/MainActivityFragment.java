@@ -59,8 +59,9 @@ public class MainActivityFragment extends Fragment {
     public GPSTracker tracker;
     private CameraManager cameraManager;
     private FloatingActionButton floatingCameraButton;
+    private FloatingActionButton floatingVideoButton;
     private RadiusMarkerClusterer markers;
-    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_TAKE_PHOTO = 100;
 
     public MainActivityFragment() {
     }
@@ -73,6 +74,7 @@ public class MainActivityFragment extends Fragment {
 
         map = (MapView) view.findViewById(R.id.map);
         floatingCameraButton = (FloatingActionButton)  view.findViewById(R.id.onUseCamera);
+        floatingVideoButton = (FloatingActionButton)  view.findViewById(R.id.onUseVideo);
 
         tracker = new GPSTracker(getContext());
         cameraManager = new CameraManager(((MainActivity)getActivity()));
@@ -83,6 +85,15 @@ public class MainActivityFragment extends Fragment {
                 cameraManager.takePhoto();
             }
         });
+
+        floatingVideoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cameraManager.takeVideo();
+            }
+        });
+
+
 
         initializeMap();
 
@@ -134,7 +145,7 @@ public class MainActivityFragment extends Fragment {
 //            marker.setIcon(getResources().getDrawable(R.drawable.parking));
 
 
-        marker.setTitle("test");
+        marker.setTitle(p.getName());
 //        marker.setImage();
         marker.setAlpha(0.6f);
 

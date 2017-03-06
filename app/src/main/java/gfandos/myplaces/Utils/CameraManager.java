@@ -26,7 +26,7 @@ import static android.app.Activity.RESULT_OK;
 public class CameraManager {
 
     public String currentPhotoPath;
-    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_TAKE_PHOTO = 100;
 //    private static final int ACTIVITAT_SELECCIONAR_IMATGE = 1;
 //    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
 //    private Uri fileUri;
@@ -51,7 +51,12 @@ public class CameraManager {
             ex.printStackTrace();
             // Error occurred while creating the File
         }
-//        }
+    }
+
+    public void takeVideo() {
+
+        ((MainActivity) activity).startVideoActivity();
+
     }
 
     private File createImageFile() throws IOException {
