@@ -40,6 +40,7 @@ import org.osmdroid.views.overlay.Marker;
 import java.io.File;
 import java.io.IOException;
 
+import gfandos.myplaces.Activities.Information;
 import gfandos.myplaces.Activities.MainActivity;
 import gfandos.myplaces.Pojo.Picture;
 import gfandos.myplaces.R;
@@ -87,6 +88,13 @@ public class MainActivityFragment extends Fragment {
 
         setZoom();
 
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         return view;
     }
 
@@ -114,8 +122,8 @@ public class MainActivityFragment extends Fragment {
 
         Marker marker = new Marker(map);
         GeoPoint pos = new GeoPoint(
-                tracker.latitude,
-                tracker.longitude
+                p.getLatitude(),
+                p.getLongitude()
         );
         marker.setPosition(pos);
 

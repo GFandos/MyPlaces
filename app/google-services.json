@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "605992285165-hqnf4vk0srm8iphk037u73drkt23qqpd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "gfandos.myplaces",
+            "certificate_hash": "53153da84987f32e1495b136e4bd9b195c3df02e"
+          }
+        },
+        {
           "client_id": "605992285165-sfl97ea4s1jdvjtdss32rje7v8hkogh3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -30,6 +38,9 @@
       "api_key": [
         {
           "current_key": "AIzaSyCxFDtKxhif5LV6inLVJoSDDXE_6VpvVIk"
+        },
+        {
+          "current_key": "AIzaSyCbHE-Qol0bYCSO17CqYt5ehKw4qfN6ILY"
         }
       ],
       "services": {

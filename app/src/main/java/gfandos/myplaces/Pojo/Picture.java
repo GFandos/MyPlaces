@@ -7,13 +7,17 @@ package gfandos.myplaces.Pojo;
 public class Picture {
 
     private String pictureID;
-    private String name;
+
     private String path;
     private double latitude;
     private double longitude;
 
-    public Picture(String _name, String _path, String _pID, double lat, double lon) {
-        name = _name;
+    //Restaurant, Monument, Other
+    private String type;
+    private String name;
+    private String description;
+
+    public Picture(String _path, String _pID, double lat, double lon) {
         path = _path;
         pictureID = _pID;
         latitude = lat;
@@ -62,5 +66,21 @@ public class Picture {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -32,25 +32,24 @@ public class CameraManager {
 //    private Uri fileUri;
     private Activity activity;
     private String currentImageName;
+    private File photoFile;
 
     public CameraManager(Activity a) {
         activity = a;
     }
 
     public void takePhoto() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
 //        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
         // Create the File where the photo should go
-        File photoFile = null;
         try {
             photoFile = createImageFile();
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                ((MainActivity) activity).startPhotoActivity(photoFile);
+            }
         } catch (IOException ex) {
+            ex.printStackTrace();
             // Error occurred while creating the File
-        }
-        // Continue only if the File was successfully created
-        if (photoFile != null) {
-            ((MainActivity) activity).startPhotoActivity(photoFile, takePictureIntent);
         }
 //        }
     }

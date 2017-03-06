@@ -31,6 +31,7 @@ import gfandos.myplaces.Utils.GPSTracker;
 public class MainActivity extends AppCompatActivity {
 
     static final int REQUEST_TAKE_PHOTO = 1;
+    private static final int REQUEST_SAVE = 1;
     private File filePhoto;
     public DatabaseReference mDatabaseRef;
     private GPSTracker gps;
@@ -109,10 +110,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void startPhotoActivity(File photofile, Intent intent) {
+    public void startPhotoActivity(File photofile) {
+        System.out.println(photofile.exists());
         filePhoto = photofile;
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photofile));
-        startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+        Intent take = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (take.resolveActivity(getPackageManager()) != null) {
+            if (filePhoto != null) {
+                take.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(filePhoto));
+                startActivityForResult(take, REQUEST_TAKE_PHOTO);
+            }
+        }
     }
 
     @Override
@@ -121,6 +129,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
+
+                Intent i = new Intent(this, Information.class);
+                startActivityForResult(i, REQUEST_SAVE);
 
                 FragmentManager fm = getSupportFragmentManager();
 
@@ -131,10 +142,10 @@ public class MainActivity extends AppCompatActivity {
 
                 String id = "" + d.getTime();
 
-                Picture picture = new Picture(filePhoto.getName(), filePhoto.getAbsolutePath(), id, gps.latitude, gps.longitude);
+//                Picture picture = new Picture(filePhoto.getAbsolutePath(), id, gps.latitude, gps.longitude);
 
 
-                mDatabaseRef.push().setValue(picture);
+//                mDatabaseRef.push().setValue(picture);
 
 
             }
