@@ -17,6 +17,7 @@ import android.widget.RadioGroup;
 
 import gfandos.myplaces.Activities.Information;
 import gfandos.myplaces.Activities.MainActivity;
+import gfandos.myplaces.MyPlaces;
 import gfandos.myplaces.R;
 
 /**
@@ -54,6 +55,11 @@ public class InformationFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        MyPlaces my = MyPlaces.getInstance();
+
+
+        final String absolutePath = my.filePhoto.getAbsolutePath();
+
         radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
 
         radioRes = (RadioButton) view.findViewById(R.id.radioRes);
@@ -80,10 +86,9 @@ public class InformationFragment extends Fragment {
                 title = titleEdit.getText().toString();
                 description = descriptionEdit.getText().toString();
 
-                String data = type + " " + title + " " + description;
+                String data = type + " " + title + " " + description+ " "+absolutePath;
 
                 Intent i = new Intent(data);
-
 
                 getActivity().setResult(404, i);
                 getActivity().finish();

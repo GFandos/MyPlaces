@@ -24,6 +24,7 @@ import java.io.File;
 import java.util.Date;
 
 import gfandos.myplaces.Fragments.MainActivityFragment;
+import gfandos.myplaces.MyPlaces;
 import gfandos.myplaces.Pojo.Picture;
 import gfandos.myplaces.R;
 import gfandos.myplaces.Utils.GPSTracker;
@@ -119,10 +120,12 @@ public class MainActivity extends AppCompatActivity {
     public void startPhotoActivity(File photofile) {
 //        System.out.println(photofile.exists());
         filePhoto = photofile;
-        currentMedia = "photo";
+
         Intent take = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (take.resolveActivity(getPackageManager()) != null) {
             if (filePhoto != null) {
+                MyPlaces my = MyPlaces.getInstance();
+                my.filePhoto = filePhoto;
                 take.putExtra(MediaStore.EXTRA_OUTPUT,
                         Uri.fromFile(filePhoto));
                 startActivityForResult(take, REQUEST_TAKE_PHOTO);
@@ -132,10 +135,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void startVideoActivity(File videoFile) {
 
-
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
-        currentMedia = "video";
+
         fileVideo = videoFile;
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileVideo);
         intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
@@ -149,21 +151,26 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
-                System.out.println("request photo");
                 Intent i = new Intent(this, Information.class);
+                currentMedia = "photo";
                 startActivityForResult(i, REQUEST_INFORMATION_RETURN);
             }
         }
 
         if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                Uri uri = data.getData();
                 System.out.println("request video");
+                MyPlaces my = MyPlaces.getInstance();
+                my.filePhoto = new File(uri.toString());
                 Intent i = new Intent(this, Information.class);
+                currentMedia = "video";
                 startActivityForResult(i, REQUEST_INFORMATION_RETURN);
             }
         }
 
         if (requestCode == REQUEST_INFORMATION_RETURN){
+
             System.out.println("hola caracola ;)");
             System.out.println("request save");
             FragmentManager fm = getSupportFragmentManager();
@@ -173,24 +180,21 @@ public class MainActivity extends AppCompatActivity {
             Date d = new Date();
             String id = "" + d.getTime();
 
-            Picture picture;
-
-            if(currentMedia.compareTo("photo") == 0) {
-                picture = new Picture(filePhoto.getAbsolutePath(), id, gps.latitude, gps.longitude);
-            } else {
-                picture = new Picture(fileVideo.getAbsolutePath(), id, gps.latitude, gps.longitude);
+            Picture picture = new Picture();
+            if(data != null) {
+                String array[] = data.getAction().split(" ");
+                System.out.println("Data != null");
+                picture.setType(array[0]);
+                picture.setName(array[1]);
+                picture.setDescription(array[2]);
+                if(currentMedia.compareTo("photo") == 0) {
+                    picture = new Picture(array[3], id, gps.latitude, gps.longitude);
+                } else {
+                    picture = new Picture(array[3], id, gps.latitude, gps.longitude);
+                }
             }
 
-
-//            if(data != null) {
-//                String array[] = data.getAction().split(" ");
-//                System.out.println("Data != null");
-//                picture.setType(array[0]);
-//                picture.setName(array[1]);
-//                picture.setDescription(array[2]);
-//            }
-//
-//            mDatabaseRef.push().setValue(picture);
+            mDatabaseRef.push().setValue(picture);
         }
 
     }
