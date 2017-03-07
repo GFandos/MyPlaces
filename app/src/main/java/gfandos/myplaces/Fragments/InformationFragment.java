@@ -1,6 +1,7 @@
 package gfandos.myplaces.Fragments;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import gfandos.myplaces.Activities.Information;
+import gfandos.myplaces.Activities.MainActivity;
 import gfandos.myplaces.R;
 
 /**
@@ -82,8 +84,13 @@ public class InformationFragment extends Fragment {
 
                 Intent i = new Intent(data);
 
-                ((Information)getActivity()).setResult(1, i);
-                ((Information)getActivity()).finish();
+
+                getActivity().setResult(404, i);
+                getActivity().finish();
+
+
+//                ((MainActivity)getActivity()).pushToDB(data);
+                //((Information)getActivity()).finish();
 
             }
         });

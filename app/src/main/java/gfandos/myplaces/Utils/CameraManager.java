@@ -33,6 +33,7 @@ public class CameraManager {
     private Activity activity;
     private String currentImageName;
     private File photoFile;
+    private File videoFile;
 
     public CameraManager(Activity a) {
         activity = a;
@@ -55,7 +56,16 @@ public class CameraManager {
 
     public void takeVideo() {
 
-        ((MainActivity) activity).startVideoActivity();
+        try {
+            videoFile = createVideoFile();
+            // Continue only if the File was successfully created
+            if (videoFile != null) {
+                ((MainActivity) activity).startVideoActivity(videoFile);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            // Error occurred while creating the File
+        }
 
     }
 
@@ -76,6 +86,21 @@ public class CameraManager {
 
         return image;
 
+    }
+
+    public static File createVideoFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+
+        String imageFileName = "MP4_" + timeStamp + "_";
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".mp4",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        return image;
     }
 
 }

@@ -35,10 +35,12 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_TAKE_PHOTO = 100;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
     private static final int REQUEST_SAVE = 300;
+    private static final int REQUEST_INFORMATION_RETURN = 404;
     private File filePhoto;
-    private Uri fileVideo;
+    private File fileVideo;
     public DatabaseReference mDatabaseRef;
     private GPSTracker gps;
+    private String currentMedia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
     public void startPhotoActivity(File photofile) {
 //        System.out.println(photofile.exists());
         filePhoto = photofile;
+        currentMedia = "photo";
         Intent take = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (take.resolveActivity(getPackageManager()) != null) {
             if (filePhoto != null) {
@@ -127,11 +130,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void startVideoActivity() {
+    public void startVideoActivity(File videoFile) {
+
 
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
-        fileVideo = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);;
+        currentMedia = "video";
+        fileVideo = videoFile;
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileVideo);
         intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
         startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
@@ -142,40 +147,54 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == REQUEST_TAKE_PHOTO) {
+        if (requestCode == REQUEST_TAKE_PHOTO) {
             if (resultCode == RESULT_OK) {
                 System.out.println("request photo");
                 Intent i = new Intent(this, Information.class);
-                startActivityForResult(i, REQUEST_SAVE);
-
-
+                startActivityForResult(i, REQUEST_INFORMATION_RETURN);
             }
         }
 
-        if(requestCode == REQUEST_SAVE) {
+        if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-
-                System.out.println("request save");
-                FragmentManager fm = getSupportFragmentManager();
-                MainActivityFragment fragment = (MainActivityFragment)fm.findFragmentById(R.id.fragment);
-                gps = fragment.tracker;
-
-                Date d = new Date();
-                String id = "" + d.getTime();
-
-                Picture picture = new Picture(filePhoto.getAbsolutePath(), id, gps.latitude, gps.longitude);
-
-                if(data != null) {
-                    String array[] = data.getAction().split(" ");
-
-                    picture.setType(array[0]);
-                    picture.setName(array[1]);
-                    picture.setDescription(array[2]);
-                }
-
-                mDatabaseRef.push().setValue(picture);
+                System.out.println("request video");
+                Intent i = new Intent(this, Information.class);
+                startActivityForResult(i, REQUEST_INFORMATION_RETURN);
             }
         }
+
+        if (requestCode == REQUEST_INFORMATION_RETURN){
+            System.out.println("hola caracola ;)");
+            System.out.println("request save");
+            FragmentManager fm = getSupportFragmentManager();
+            MainActivityFragment fragment = (MainActivityFragment)fm.findFragmentById(R.id.fragment);
+            gps = fragment.tracker;
+
+            Date d = new Date();
+            String id = "" + d.getTime();
+
+            Picture picture;
+
+            if(currentMedia.compareTo("photo") == 0) {
+                picture = new Picture(filePhoto.getAbsolutePath(), id, gps.latitude, gps.longitude);
+            } else {
+                picture = new Picture(fileVideo.getAbsolutePath(), id, gps.latitude, gps.longitude);
+            }
+
+
+//            if(data != null) {
+//                String array[] = data.getAction().split(" ");
+//                System.out.println("Data != null");
+//                picture.setType(array[0]);
+//                picture.setName(array[1]);
+//                picture.setDescription(array[2]);
+//            }
+//
+//            mDatabaseRef.push().setValue(picture);
+        }
+
     }
+
+
 
 }
