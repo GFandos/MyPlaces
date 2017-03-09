@@ -30,8 +30,12 @@
             android:label="@string/title_activity_information"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DetailActivity"
+            android:name=".Activities.DetailActivity"
             android:label="@string/title_activity_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.VideoPlayer"
+            android:label="@string/title_activity_video_player"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -1,8 +1,8 @@
-package gfandos.myplaces;
+package gfandos.myplaces.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -18,6 +18,10 @@ import com.bumptech.glide.Glide;
 
 import java.util.HashMap;
 
+import gfandos.myplaces.Activities.DetailActivity;
+import gfandos.myplaces.Activities.VideoPlayer;
+import gfandos.myplaces.R;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -31,6 +35,7 @@ public class DetailActivityFragment extends Fragment {
     private ImageView image;
 
     private Button okButton;
+    private Button onVideo;
 
     public DetailActivityFragment() {
     }
@@ -48,10 +53,11 @@ public class DetailActivityFragment extends Fragment {
         image = (ImageView) view.findViewById(R.id.imageView);
 
         okButton = (Button) view.findViewById(R.id.okButton);
+        onVideo = (Button) view.findViewById(R.id.onVideo);
 
         String data = getActivity().getIntent().getStringExtra("EXTRA_PICTURE");
 
-        String array[] = data.split("º");
+        final String array[] = data.split("º");
 
         String path = array[0];
         String title = array[1];
@@ -65,11 +71,24 @@ public class DetailActivityFragment extends Fragment {
 
         if(media == 0) {
             Glide.with(getContext()).load(path).into(image);
+            onVideo.setVisibility(View.INVISIBLE);
         } else {
+            onVideo.setVisibility(View.VISIBLE);
             Uri myUri = Uri.parse(array[0]);
             Bitmap bitmap = getVideoFrame(getContext(), myUri);
             image.setImageBitmap(bitmap);
+
+            onVideo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(((DetailActivity)getActivity()), VideoPlayer.class);
+                    String data = array[0];
+                    intent.putExtra("EXTRA_PATH", data);
+                    startActivity(intent);
+                }
+            });
         }
+
 
 
         okButton.setOnClickListener(new View.OnClickListener() {
