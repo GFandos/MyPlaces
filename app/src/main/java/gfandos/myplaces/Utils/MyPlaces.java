@@ -1,4 +1,4 @@
-package gfandos.myplaces;
+package gfandos.myplaces.Utils;
 
 import android.app.Application;
 

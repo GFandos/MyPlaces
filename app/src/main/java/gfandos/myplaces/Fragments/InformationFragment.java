@@ -1,7 +1,5 @@
 package gfandos.myplaces.Fragments;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,14 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import gfandos.myplaces.Activities.Information;
-import gfandos.myplaces.Activities.MainActivity;
-import gfandos.myplaces.MyPlaces;
+import gfandos.myplaces.Utils.MyPlaces;
 import gfandos.myplaces.R;
 
 /**
@@ -55,10 +50,9 @@ public class InformationFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        MyPlaces my = MyPlaces.getInstance();
+        final MyPlaces my = MyPlaces.getInstance();
 
 
-        final String absolutePath = my.filePhoto.getAbsolutePath();
 
         radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
 
@@ -86,16 +80,17 @@ public class InformationFragment extends Fragment {
                 title = titleEdit.getText().toString();
                 description = descriptionEdit.getText().toString();
 
-                String data = type + " " + title + " " + description+ " "+absolutePath;
+                String absolutePath = "null";
+                if(my.filePhoto != null){
+                    absolutePath = my.filePhoto.getAbsolutePath();
+                }
+
+                String data = type + "º" + title + "º" + description + "º" + absolutePath;
 
                 Intent i = new Intent(data);
 
                 getActivity().setResult(404, i);
                 getActivity().finish();
-
-
-//                ((MainActivity)getActivity()).pushToDB(data);
-                //((Information)getActivity()).finish();
 
             }
         });

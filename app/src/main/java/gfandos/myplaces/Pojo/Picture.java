@@ -17,7 +17,10 @@ public class Picture {
     private String name;
     private String description;
 
-    public Picture(String _path, String _pID, double lat, double lon) {
+    // 0 = photo, 1 = video
+    private int media;
+
+    public Picture(String _path, String _pID, double lat, double lon, int media_) {
         path = _path;
         pictureID = _pID;
         latitude = lat;
@@ -25,6 +28,7 @@ public class Picture {
         name = "NO NAME";
         type = "NO TYPE";
         description = "NO DESCRIPTION";
+        media = media_;
     }
 
     public Picture() {
@@ -85,5 +89,13 @@ public class Picture {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getMedia() {
+        return media;
+    }
+
+    public void setMedia(int media) {
+        this.media = media;
     }
 }

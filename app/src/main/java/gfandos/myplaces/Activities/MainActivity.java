@@ -1,16 +1,15 @@
 package gfandos.myplaces.Activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,16 +19,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Date;
 
 import gfandos.myplaces.Fragments.MainActivityFragment;
-import gfandos.myplaces.MyPlaces;
+import gfandos.myplaces.Utils.MyPlaces;
 import gfandos.myplaces.Pojo.Picture;
 import gfandos.myplaces.R;
 import gfandos.myplaces.Utils.GPSTracker;
-
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -121,14 +119,11 @@ public class MainActivity extends AppCompatActivity {
 //        System.out.println(photofile.exists());
         filePhoto = photofile;
 
-        Intent take = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (take.resolveActivity(getPackageManager()) != null) {
+        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (i.resolveActivity(getPackageManager()) != null) {
             if (filePhoto != null) {
-                MyPlaces my = MyPlaces.getInstance();
-                my.filePhoto = filePhoto;
-                take.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(filePhoto));
-                startActivityForResult(take, REQUEST_TAKE_PHOTO);
+                i.putExtra(MediaStore.EXTRA_OUTPUT, filePhoto);
+                startActivityForResult(i, REQUEST_TAKE_PHOTO);
             }
         }
     }
@@ -136,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
     public void startVideoActivity(File videoFile) {
 
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-
 
         fileVideo = videoFile;
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileVideo);
@@ -153,6 +147,16 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Intent i = new Intent(this, Information.class);
                 currentMedia = "photo";
+
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
+                Uri tempUri = getImageUri(getApplicationContext(), photo);
+
+                // CALL THIS METHOD TO GET THE ACTUAL PATH
+                File finalFile = new File(getRealPathFromURI(tempUri));
+
+                filePhoto = finalFile;
+
                 startActivityForResult(i, REQUEST_INFORMATION_RETURN);
             }
         }
@@ -162,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 Uri uri = data.getData();
                 System.out.println("request video");
                 MyPlaces my = MyPlaces.getInstance();
-                my.filePhoto = new File(uri.toString());
+                my.filePhoto = new File(getRealPathFromURI(uri));
                 Intent i = new Intent(this, Information.class);
                 currentMedia = "video";
                 startActivityForResult(i, REQUEST_INFORMATION_RETURN);
@@ -182,22 +186,38 @@ public class MainActivity extends AppCompatActivity {
 
             Picture picture = new Picture();
             if(data != null) {
-                String array[] = data.getAction().split(" ");
+                String array[] = data.getAction().split("º");
                 System.out.println("Data != null");
+
+                if(currentMedia.compareTo("photo") == 0) {
+                    picture = new Picture(filePhoto.getAbsolutePath(), id, gps.latitude, gps.longitude, 0);
+                } else {
+                    picture = new Picture(array[3], id, gps.latitude, gps.longitude, 1);
+                }
                 picture.setType(array[0]);
                 picture.setName(array[1]);
                 picture.setDescription(array[2]);
-                if(currentMedia.compareTo("photo") == 0) {
-                    picture = new Picture(array[3], id, gps.latitude, gps.longitude);
-                } else {
-                    picture = new Picture(array[3], id, gps.latitude, gps.longitude);
-                }
             }
 
             mDatabaseRef.push().setValue(picture);
         }
 
     }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
+
 
 
 

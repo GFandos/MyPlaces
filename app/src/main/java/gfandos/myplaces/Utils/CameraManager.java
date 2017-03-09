@@ -92,15 +92,15 @@ public class CameraManager {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
         String imageFileName = "MP4_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
 
-        File image = File.createTempFile(
+        File video = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".mp4",         /* suffix */
                 storageDir      /* directory */
         );
 
-        return image;
+        return video;
     }
 
 }

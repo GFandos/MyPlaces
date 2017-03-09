@@ -42,6 +42,7 @@ import java.io.IOException;
 
 import gfandos.myplaces.Activities.Information;
 import gfandos.myplaces.Activities.MainActivity;
+import gfandos.myplaces.DetailActivity;
 import gfandos.myplaces.Pojo.Picture;
 import gfandos.myplaces.R;
 import gfandos.myplaces.Utils.CameraManager;
@@ -99,13 +100,6 @@ public class MainActivityFragment extends Fragment {
 
         setZoom();
 
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
         return view;
     }
 
@@ -131,6 +125,8 @@ public class MainActivityFragment extends Fragment {
 
     private void addMarker(Picture p) {
 
+        final String data = p.getPath() + "º" + p.getName() + "º" + p.getType() + "º" + p.getDescription() + "º" + p.getMedia();
+
         Marker marker = new Marker(map);
         GeoPoint pos = new GeoPoint(
                 p.getLatitude(),
@@ -149,7 +145,22 @@ public class MainActivityFragment extends Fragment {
 //        marker.setImage();
         marker.setAlpha(0.6f);
 
+        marker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+
+            public boolean onMarkerClick(Marker arg0, MapView arg1) {
+
+                System.out.println("Marker clicked");
+
+                Intent intent = new Intent(((MainActivity)getActivity()), DetailActivity.class);
+                intent.putExtra("EXTRA_PICTURE", data);
+                startActivity(intent);
+
+                return false;
+            }
+        });
+
         markers.add(marker);
+
 
         markers.invalidate();
         map.invalidate();
